@@ -1,38 +1,72 @@
 import java.util.Scanner;
+import java.util.Arrays;
 
-class j24 {
+public class j24 {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
+        Scanner scanner = new Scanner(System.in);
+        if (!scanner.hasNextInt()) return;
+        int n = scanner.nextInt();
+        int maxT = n + 60;
 
-        int bestCost = Integer.MAX_VALUE;
-        int bestTrips = 0;
-        int b1 = 0, b5 = 0, b10 = 0, b20 = 0, b60 = 0;
+        long[] cost = new long[maxT + 1];
+        int[] totalTrips = new int[maxT + 1];
+        int[][] ticketsCount = new int[maxT + 1][5]; // t1, t5, t10, t20, t60
 
-        for (int i = 0; i <= n / 60 + 1; i++) {
-            for (int j = 0; j <= n / 20 + 1; j++) {
-                for (int k = 0; k <= n / 10 + 1; k++) {
-                    for (int l = 0; l <= n / 5 + 1; l++) {
-                        int trips = i * 60 + j * 20 + k * 10 + l * 5;
-                        int ones = Math.max(0, n - trips);
-                        int totalTrips = trips + ones;
-                        int cost = i * 440 + j * 230 + k * 125 + l * 70 + ones * 15;
+        Arrays.fill(cost, Long.MAX_VALUE);
+        cost[0] = 0;
+        totalTrips[0] = 0;
 
-                        if (totalTrips >= n && (cost < bestCost ||
-                                (cost == bestCost && totalTrips > bestTrips))) {
-                            bestCost = cost;
-                            bestTrips = totalTrips;
-                            b60 = i;
-                            b20 = j;
-                            b10 = k;
-                            b5 = l;
-                            b1 = ones;
-                        }
-                    }
+        int[] sizes = {1, 5, 10, 20, 60};
+        long[] prices = {15, 70, 125, 230, 440};
+
+        for (int i = 0; i <= maxT; i++) {
+            if (cost[i] == Long.MAX_VALUE) continue;
+
+            for (int j = 0; j < 5; j++) {
+                int size = sizes[j];
+                long p = prices[j];
+
+                int nxt = Math.min(maxT, i + size);
+                long newCost = cost[i] + p;
+                int newTrips = totalTrips[i] + size;
+
+                boolean better = false;
+                if (newCost < cost[nxt]) {
+                    better = true;
+                } else if (newCost == cost[nxt] && newTrips > totalTrips[nxt]) {
+                    better = true;
+                }
+
+                if (better) {
+                    cost[nxt] = newCost;
+                    totalTrips[nxt] = newTrips;
+                    System.arraycopy(ticketsCount[i], 0, ticketsCount[nxt], 0, 5);
+                    ticketsCount[nxt][j]++;
                 }
             }
         }
 
-        System.out.println(b1 + " " + b5 + " " + b10 + " " + b20 + " " + b60);
+        long minCost = Long.MAX_VALUE;
+        int maxTrips = -1;
+        int bestIdx = -1;
+
+        for (int i = n; i <= maxT; i++) {
+            if (cost[i] < minCost) {
+                minCost = cost[i];
+                maxTrips = totalTrips[i];
+                bestIdx = i;
+            } else if (cost[i] == minCost && totalTrips[i] > maxTrips) {
+                maxTrips = totalTrips[i];
+                bestIdx = i;
+            }
+        }
+
+        System.out.println(ticketsCount[bestIdx][0] + " " +
+                ticketsCount[bestIdx][1] + " " +
+                ticketsCount[bestIdx][2] + " " +
+                ticketsCount[bestIdx][3] + " " +
+                ticketsCount[bestIdx][4]);
+
+        scanner.close();
     }
 }

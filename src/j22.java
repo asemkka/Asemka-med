@@ -1,17 +1,27 @@
 import java.util.Scanner;
 
-class j22 {
+public class j22 {
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
+        Scanner scanner = new Scanner(System.in);
 
-        if (n % 10 == 1 && n % 100 != 11) {
-            System.out.println(n + " korova");
-        } else if (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) {
-            System.out.println(n + " korovy");
+        int n = scanner.nextInt();
+        String form;
+
+        if (n >= 11 && n <= 14) {
+            form = "korov";
         } else {
-            System.out.println(n + " korov");
+            int lastDigit = n % 10;
+            if (lastDigit == 1) {
+                form = "korova";
+            } else if (lastDigit >= 2 && lastDigit <= 4) {
+                form = "korovy";
+            } else {
+                form = "korov";
+            }
         }
+
+        System.out.println(n + " " + form);
+
+        scanner.close();
     }
 }
-

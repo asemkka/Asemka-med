@@ -1,28 +1,32 @@
 import java.util.Scanner;
 
-class j23 {
+public class j23{
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
+        Scanner scanner = new Scanner(System.in);
+        int n = scanner.nextInt();
 
-        int best1 = 0, best10 = 0, best60 = 0;
         int minCost = Integer.MAX_VALUE;
+        int bestT60 = 0, bestT10 = 0, bestT1 = 0;
 
-        for (int i = 0; i <= n / 60 + 1; i++) {
-            for (int j = 0; j <= n / 10 + 1; j++) {
-                int remaining = n - i * 60 - j * 10;
-                int k = Math.max(0, (remaining + 0));
-                int cost = i * 440 + j * 125 + k * 15;
+        // Перебираем количество билетов на 60 поездок
+        for (int t60 = 0; t60 <= n / 60 + 1; t60++) {
+            // Перебираем количество билетов на 10 поездок
+            for (int t10 = 0; t10 <= (n - t60 * 60) / 10 + 1; t10++) {
+                int remaining = n - t60 * 60 - t10 * 10;
+                int t1 = Math.max(0, remaining);
 
-                if (i * 60 + j * 10 + k >= n && cost < minCost) {
+                int cost = t60 * 440 + t10 * 125 + t1 * 15;
+
+                if (cost < minCost) {
                     minCost = cost;
-                    best60 = i;
-                    best10 = j;
-                    best1 = k;
+                    bestT60 = t60;
+                    bestT10 = t10;
+                    bestT1 = t1;
                 }
             }
         }
 
-        System.out.println(best1 + " " + best10 + " " + best60);
+        System.out.println(bestT1 + " " + bestT10 + " " + bestT60);
+        scanner.close();
     }
 }
